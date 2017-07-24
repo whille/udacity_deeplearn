@@ -1,6 +1,10 @@
 # linear transaction
 
-$$ y = Wx+b$$
+<img src="http://latex.codecogs.com/gif.latex?\frac{\partial J}{\partial
+\theta_k^{(j)}}=\sum_{i:r(i,j)=1}{\big((\theta^{(j)})^Tx^{(i)}-y^{(i,j)}\big)x_k^{(i)}}+\lambda
+\theta_k^{(j)}" />
+
+<img src="http://latex.codecogs.com/gif.latex?y = Wx + b" />
 
 # softmax
 $$S(y) = \frac{e^{y_i}}{\sum(e^{y_i})} $$
