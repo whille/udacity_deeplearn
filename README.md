@@ -16,7 +16,7 @@ notes:
 
 ## find best W, b
 Loss function
-<img src="http://latex.codecogs.com/gif.latex?L=\frac{1}{N}\sum_iD(S(WX_i+b),L_i)" />
+<img src="http://latex.codecogs.com/gif.latex?\mathcal%20L=\frac{1}{N}\sum_iD(S(WX_i+b),L_i)" />
 
 use gradient dependence
 
@@ -26,4 +26,15 @@ use gradient dependence
 * learning rate decay
 
 <img src="http://latex.codecogs.com/gif.latex?M\leftarrow0.9M+\Delta\alpha" />
+
+# deep network
+## relu
+
+<img src="http://latex.codecogs.com/gif.latex?hidden=relu(y)" />
+
+## prevent overfitting
+* early termination
+* regularization
+
+<img src="http://latex.codecogs.com/gif.latex?\mathcal%20L%20\leftarrow\%20\mathcal%20L%20+\beta\frac{1}{2}\|W\|_2^2" />
 

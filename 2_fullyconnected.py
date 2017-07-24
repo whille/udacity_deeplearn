@@ -60,9 +60,11 @@ def main():
         # it's very common, and it can be optimized). We take the average of this
         # cross-entropy across all training examples: that's our loss.
         logits_2 = calc(tf_train_dataset, weights_1, biases_1, weights_2, biases_2)
+        beta_1 = 0.1
+        beta_2 = 0.1
         loss = tf.reduce_mean(
-            tf.nn.softmax_cross_entropy_with_logits(labels=tf_train_labels,
-                                                    logits=logits_2))
+            tf.nn.softmax_cross_entropy_with_logits(labels=tf_train_labels, logits=logits_2)) + \
+                                    beta_1 * tf.nn.l2_loss(weights_1) + beta_2 * tf.nn.l2_loss(weights_2)
 
         # learning rate
         starter_learning_rate = 0.5
