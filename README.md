@@ -8,7 +8,7 @@
 
 
 ## cross entropy
-<img src="http://latex.codecogs.com/gif.latex?D=(S,L)= - \sum_i L_i log(S_i)" />
+<img src="http://latex.codecogs.com/gif.latex?D=(S,L)=-\sum_iL_ilog(S_i)" />
 
 notes:
 * L: one-hot labels
@@ -16,7 +16,7 @@ notes:
 
 ## find best W, b
 Loss function
-<img src="http://latex.codecogs.com/gif.latex? L = \frac{1}{N} \sum_i D(S(WX_i + b) , L_i)" />
+<img src="http://latex.codecogs.com/gif.latex?L=\frac{1}{N}\sum_iD(S(WX_i+b),L_i)" />
 
 use gradient dependence
 
@@ -25,5 +25,5 @@ use gradient dependence
 * momentum
 * learning rate decay
 
-<img src="http://latex.codecogs.com/gif.latex?M \leftarrow  0.9M + \Delta \alpha " />
+<img src="http://latex.codecogs.com/gif.latex?M\leftarrow0.9M+\Delta\alpha" />
 
