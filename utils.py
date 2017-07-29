@@ -12,6 +12,7 @@ data_root = '.'  # Change me to store data elsewhere
 last_percent_reported = None
 image_size = 28  # Pixel width and height.
 num_labels = 10
+num_channels = 1 # grayscale
 pixel_depth = 255.0  # Number of levels per pixel.
 
 
@@ -179,21 +180,33 @@ def randomize(dataset, labels):
     return shuffled_dataset, shuffled_labels
 
 
-def load_pickle(pickle_file, one_hot=True):
+def load_pickle(pickle_file, one_hot=True, twoD=False):
     save = None
     with open(pickle_file, 'rb') as f:
         save = pickle.load(f)
         for k in ('train', 'valid', 'test'):
+            reformat(save, k, one_hot, twoD=twoD)
             print('%s set' % k, save['%s_dataset' %k].shape, save['%s_labels' % k].shape)
-            reformat(save, k, one_hot)
     return save
 
 
-def reformat(dic, key, one_hot=True):
-    dic['%s_dataset' % key] = dic[
-        '%s_dataset' %
-        key].reshape((-1, image_size * image_size)).astype(np.float32)
+def reformat(dic, key, one_hot=True, twoD=False):
+    if not twoD:
+        dic['%s_dataset' % key] = dic[
+            '%s_dataset' %
+            key].reshape((-1, image_size * image_size, num_channels)).astype(np.float32)
+    else:
+        dic['%s_dataset' % key] = dic[
+            '%s_dataset' %
+            key].reshape((-1, image_size,  image_size, num_channels)).astype(np.float32)
     if one_hot:
         # Map 0 to [1.0, 0.0, 0.0 ...], 1 to [0.0, 1.0, 0.0 ...]
         dic['%s_labels' % key] = (np.arange(num_labels) == dic[
             '%s_labels' % key][:, None]).astype(np.float32)
+
+
+def accuracy(predictions, labels):
+    return (100.0 * np.sum(np.argmax(predictions, 1) == np.argmax(labels, 1)) /
+            predictions.shape[0])
+
+

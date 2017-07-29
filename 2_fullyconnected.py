@@ -2,8 +2,8 @@
 # encoding: utf-8
 
 import tensorflow as tf
-import numpy as np
-from utils import load_pickle
+from utils import load_pickle, accuracy
+
 
 image_size = 28
 num_hidden = 1024
@@ -16,19 +16,16 @@ pickle_file = 'notMNIST.pickle'
 train_subset = 10000
 num_steps = 801
 
-def accuracy(predictions, labels):
-    return (100.0 * np.sum(np.argmax(predictions, 1) == np.argmax(labels, 1)) /
-            predictions.shape[0])
-
-
 """
 Turn the logistic regression example with SGD into a 1-hidden layer neural
 network with rectified linear units nn.relu() and 1024 hidden nodes. This
 model should improve your validation / test accuracy.
 """
-def calc(X, w1, b1, w2, b2):
+def calc(X, w1, b1, w2, b2, dropout=True, keep_prob=0.5):
     logits_1 = tf.matmul(X, w1) +b1
     hiddens = tf.nn.relu(logits_1)
+    if dropout:
+        hiddens = tf.nn.dropout(hiddens, keep_prob)
     logits_2 = tf.matmul(hiddens, w2) + b2
     return logits_2
 
@@ -82,8 +79,8 @@ def main():
         # These are not part of training, but merely here so that we can report
         # accuracy figures as we train.
         train_prediction = tf.nn.softmax(logits_2)
-        valid_prediction = tf.nn.softmax(calc(tf_valid_dataset, weights_1, biases_1, weights_2, biases_2))
-        test_prediction = tf.nn.softmax(calc(tf_test_dataset, weights_1, biases_1, weights_2, biases_2))
+        valid_prediction = tf.nn.softmax(calc(tf_valid_dataset, weights_1, biases_1, weights_2, biases_2, dropout=False))
+        test_prediction = tf.nn.softmax(calc(tf_test_dataset, weights_1, biases_1, weights_2, biases_2, dropout=False))
 
     with tf.Session(graph=graph) as session:
         # This is a one-time operation which ensures the parameters get initialized as
