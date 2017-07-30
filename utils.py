@@ -11,8 +11,8 @@ from six.moves import cPickle as pickle
 data_root = '.'  # Change me to store data elsewhere
 last_percent_reported = None
 image_size = 28  # Pixel width and height.
-num_labels = 10
 num_channels = 1 # grayscale
+num_labels = 10
 pixel_depth = 255.0  # Number of levels per pixel.
 
 
