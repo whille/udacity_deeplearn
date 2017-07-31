@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from utils import accuracy, image_size, num_channels, num_labels
+import tensorflow as tf
+from utils import accuracy, image_size, num_channels, num_labels, load_pickle
 
 
-def run(dic, graph, model, batch_size=16, num_steps=1001):
-    import tensorflow as tf
-
+def run(graph, model, batch_size=16, num_steps=1001):
+    pickle_file = 'notMNIST.pickle'
+    dic = load_pickle(pickle_file, twoD=True)
     with graph.as_default():
         # Input data.
         train_dataset = tf.placeholder(tf.float32, shape=(batch_size, image_size, image_size, num_channels))
@@ -19,14 +20,20 @@ def run(dic, graph, model, batch_size=16, num_steps=1001):
             tf.nn.softmax_cross_entropy_with_logits(labels=train_labels, logits=logits))
 
         # Optimizer.
+        # Passing global_step to minimize() will increment it at each step.
         optimizer = tf.train.GradientDescentOptimizer(0.05).minimize(loss)
 
         # Predictions for the training, validation, and test data.
+        # These are not part of training, but merely here so that we can report
+        # accuracy figures as we train.
         train_prediction = tf.nn.softmax(logits)
-        valid_prediction = tf.nn.softmax(model(valid_dataset))
-        test_prediction = tf.nn.softmax(model(test_dataset))
+        valid_prediction = tf.nn.softmax(model(valid_dataset, training=False))
+        test_prediction = tf.nn.softmax(model(test_dataset, training=False))
 
     with tf.Session(graph=graph) as session:
+        # This is a one-time operation which ensures the parameters get initialized as
+        # we described in the graph: random weights for the matrix, zeros for the
+        # biases.
         tf.global_variables_initializer().run()
         print('Initialized')
         for step in range(num_steps):

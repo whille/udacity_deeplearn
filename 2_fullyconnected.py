@@ -16,52 +16,51 @@ pickle_file = 'notMNIST.pickle'
 train_subset = 10000
 num_steps = 801
 
-"""
-Turn the logistic regression example with SGD into a 1-hidden layer neural
-network with rectified linear units nn.relu() and 1024 hidden nodes. This
-model should improve your validation / test accuracy.
-"""
-def calc(X, w1, b1, w2, b2, dropout=True, keep_prob=0.5):
-    logits_1 = tf.matmul(X, w1) +b1
-    hiddens = tf.nn.relu(logits_1)
-    if dropout:
-        hiddens = tf.nn.dropout(hiddens, keep_prob)
-    logits_2 = tf.matmul(hiddens, w2) + b2
-    return logits_2
-
-
 def main():
     dic = load_pickle(pickle_file)
     graph = tf.Graph()
     with graph.as_default():
         # Input data.
-        # Load the training, validation and test data into constants that are
-        # attached to the graph.
-        tf_train_dataset = tf.constant(dic['train_dataset'][:train_subset, :])
-        tf_train_labels = tf.constant(dic['train_labels'][:train_subset])
-        tf_valid_dataset = tf.constant(dic['valid_dataset'])
-        tf_test_dataset = tf.constant(dic['test_dataset'])
+        # Load the training, validation and test data into constants that are attached to the graph.
+        train_dataset = tf.constant(dic['train_dataset'][:train_subset, :])
+        train_labels = tf.constant(dic['train_labels'][:train_subset])
+        valid_dataset = tf.constant(dic['valid_dataset'])
+        test_dataset = tf.constant(dic['test_dataset'])
 
         # Variables.
         # These are the parameters that we are going to be training.
         # The weight # matrix will be initialized using random values following a (truncated)
         # normal distribution. The biases get initialized to zero.
-        weights_1 = tf.Variable(tf.truncated_normal([image_size * image_size, num_hidden]))
-        biases_1 = tf.Variable(tf.zeros([num_hidden]))
-        weights_2 = tf.Variable(tf.truncated_normal([num_hidden, num_labels]))
-        biases_2 = tf.Variable(tf.zeros([num_labels]))
+        W1 = tf.Variable(tf.truncated_normal([image_size * image_size, num_hidden]))
+        B1 = tf.Variable(tf.zeros([num_hidden]))
+        W2 = tf.Variable(tf.truncated_normal([num_hidden, num_labels]))
+        B2 = tf.Variable(tf.zeros([num_labels]))
+
+        """
+        Turn the logistic regression example with SGD into a 1-hidden layer neural
+        network with rectified linear units nn.relu() and 1024 hidden nodes. This
+        model should improve your validation / test accuracy.
+        """
+        def model(X, dropout=True, keep_prob=0.5):
+            logits= tf.matmul(X, W1) +B1
+            hiddens = tf.nn.relu(logits)
+            if dropout:
+                hiddens = tf.nn.dropout(hiddens, keep_prob)
+            logits= tf.matmul(hiddens, W2) + B2
+            return logits
 
         # Training computation.
         # We multiply the inputs with the weight matrix, and add biases. We compute
         # the softmax and cross-entropy (it's one operation in TensorFlow, because
         # it's very common, and it can be optimized). We take the average of this
         # cross-entropy across all training examples: that's our loss.
-        logits_2 = calc(tf_train_dataset, weights_1, biases_1, weights_2, biases_2)
+        logits = model(train_dataset)
+
         beta_1 = 0.1
         beta_2 = 0.1
         loss = tf.reduce_mean(
-            tf.nn.softmax_cross_entropy_with_logits(labels=tf_train_labels, logits=logits_2)) + \
-                                    beta_1 * tf.nn.l2_loss(weights_1) + beta_2 * tf.nn.l2_loss(weights_2)
+            tf.nn.softmax_cross_entropy_with_logits(labels=train_labels, logits=logits)) + \
+                                    beta_1 * tf.nn.l2_loss(W1) + beta_2 * tf.nn.l2_loss(W2)
 
         # learning rate
         starter_learning_rate = 0.5
@@ -78,9 +77,9 @@ def main():
         # Predictions for the training, validation, and test data.
         # These are not part of training, but merely here so that we can report
         # accuracy figures as we train.
-        train_prediction = tf.nn.softmax(logits_2)
-        valid_prediction = tf.nn.softmax(calc(tf_valid_dataset, weights_1, biases_1, weights_2, biases_2, dropout=False))
-        test_prediction = tf.nn.softmax(calc(tf_test_dataset, weights_1, biases_1, weights_2, biases_2, dropout=False))
+        train_prediction = tf.nn.softmax(logits)
+        valid_prediction = tf.nn.softmax(model(valid_dataset, dropout=False))
+        test_prediction = tf.nn.softmax(model(test_dataset, dropout=False))
 
     with tf.Session(graph=graph) as session:
         # This is a one-time operation which ensures the parameters get initialized as

@@ -194,7 +194,7 @@ def reformat(dic, key, one_hot=True, twoD=False):
     if not twoD:
         dic['%s_dataset' % key] = dic[
             '%s_dataset' %
-            key].reshape((-1, image_size * image_size, num_channels)).astype(np.float32)
+            key].reshape((-1, image_size * image_size)).astype(np.float32)
     else:
         dic['%s_dataset' % key] = dic[
             '%s_dataset' %

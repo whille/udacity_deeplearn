@@ -2,11 +2,8 @@
 # encoding: utf-8
 
 import tensorflow as tf
-from utils import load_pickle, image_size, num_channels, num_labels
+from utils import image_size, num_channels, num_labels
 import trainer
-
-pickle_file = 'notMNIST.pickle'
-dic = load_pickle(pickle_file, twoD=True)
 
 depth = 16
 num_hidden = 64
@@ -27,7 +24,7 @@ with graph.as_default():
     B4 = tf.Variable(tf.constant(1.0, shape=[num_labels]))
 
     # Model.
-    def model(data):
+    def model(data, training=True):
         conv = tf.nn.conv2d(data, W1, [1, 2, 2, 1], padding='SAME')
         hidden = tf.nn.relu(conv + B1)
         print hidden.shape
@@ -44,4 +41,4 @@ with graph.as_default():
         print hidden.shape
         return tf.matmul(hidden, W4) + B4
 
-trainer.run(dic, graph, model)
+trainer.run(graph, model)
