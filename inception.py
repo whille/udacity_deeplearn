@@ -36,10 +36,7 @@ with graph.as_default():
         conv = tf.nn.conv2d(data, W1, [1, 2, 2, 1], padding='SAME')
         hidden = tf.nn.relu(conv + B1)
         print hidden.shape
-        hidden = tf.nn.max_pool(hidden,
-                                [1, 3, 3, 1],
-                                [1, 2, 2, 1],
-                                padding='SAME')
+        hidden = tf.nn.max_pool(hidden, [1, 3, 3, 1], [1, 2, 2, 1], padding='SAME')
         print hidden.shape
         conv21 = tf.nn.conv2d(hidden, W21, [1, 2, 2, 1], padding='SAME')
         conv22 = tf.nn.conv2d(hidden, W22, [1, 1, 1, 1], padding='SAME')
@@ -50,10 +47,7 @@ with graph.as_default():
         conv23 = tf.nn.conv2d(conv23, W233, [1, 1, 1, 1], padding='SAME')
         conv23 = tf.nn.conv2d(conv23, W234, [1, 1, 1, 1], padding='SAME')
         conv23 = tf.nn.conv2d(conv23, W235, [1, 2, 2, 1], padding='SAME')
-        pool2 = tf.nn.max_pool(hidden,
-                                [1, 3, 3, 1],
-                                [1, 2, 2, 1],
-                                padding='SAME')
+        pool2 = tf.nn.max_pool(hidden, [1, 3, 3, 1], [1, 2, 2, 1], padding='SAME')
         conv242 = tf.nn.conv2d(pool2, W242, [1, 1, 1, 1], padding='SAME')
         hidden = tf.concat([conv21, conv22, conv23, conv242], axis=3)
         hidden = tf.nn.relu(hidden + B2)

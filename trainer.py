@@ -2,12 +2,13 @@
 # encoding: utf-8
 
 import tensorflow as tf
-from utils import accuracy, image_size, num_channels, num_labels, load_pickle
+from utils import accuracy, image_size, num_channels, num_labels, load_pickle, clean_dulplicate
 
 
 def run(graph, model, batch_size=16, num_steps=1001):
     pickle_file = 'notMNIST.pickle'
     dic = load_pickle(pickle_file, twoD=True)
+    clean_dulplicate(dic)
     with graph.as_default():
         # Input data.
         train_dataset = tf.placeholder(tf.float32, shape=(batch_size, image_size, image_size, num_channels))

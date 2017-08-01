@@ -210,3 +210,20 @@ def accuracy(predictions, labels):
             predictions.shape[0])
 
 
+def clean_dulplicate(dic):
+    import hashlib
+    # prob of sha1 collision ~= 0
+    train_hashes = [hashlib.sha1(x).digest() for x in dic['train_dataset']]
+    for key in ('valid', 'test'):
+        hashes = [hashlib.sha1(x).digest() for x in dic['%s_dataset' %key]]
+        keep = np.in1d(hashes, train_hashes, invert=True)
+        print("%s -> train overlap: %.1f %%" % (key, keep.sum() * 100.0/dic['%s_dataset' %key].shape[0]))
+        # get clean data
+        dic['%s_dataset' %key]= dic['%s_dataset' %key][keep]
+        dic['%s_labels' %key]= dic['%s_labels' %key][keep]
+
+
+if __name__ == '__main__':
+    pickle_file = 'notMNIST.pickle'
+    dic = load_pickle(pickle_file)
+    clean_dulplicate(dic)
